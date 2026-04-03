@@ -10,6 +10,12 @@ every task-mode CLI command against a real directory layout.
 ├── Dockerfile                       # hello-world nginx image
 ├── index.html                       # static page served by nginx
 ├── images.yaml                      # enrollment configuration
+├── .cascadeguard.yaml               # CascadeGuard config (ci.platform, etc.)
+├── .github/workflows/               # auto-generated CI pipelines (task generate-ci)
+│   ├── ci.yaml
+│   ├── build-image.yaml
+│   ├── scheduled-scan.yaml
+│   └── release.yaml
 └── cascadeguard/
     └── state/
         ├── images/
@@ -128,3 +134,31 @@ cascadeguard --state-dir cascadeguard/state status
 Prints a summary table of every application image and base image tracked
 under the state directory, including version, digest, build time, and
 dependency information.
+
+### generate-ci — emit GitHub Actions workflow files
+
+```bash
+cascadeguard generate-ci \
+  --images-yaml images.yaml \
+  --output-dir .
+```
+
+Or via the Taskfile wrapper (recommended):
+
+```bash
+task generate-ci
+```
+
+Reads `images.yaml` and emits four GitHub Actions workflow files under
+`.github/workflows/`. Re-run whenever you add or remove an image.
+
+| File | Purpose |
+|---|---|
+| `ci.yaml` | PR checks + push-to-main build, scan, and sign |
+| `build-image.yaml` | Reusable workflow called by the other three |
+| `scheduled-scan.yaml` | Nightly CVE re-scan of published images |
+| `release.yaml` | Tag-triggered sign, push, and GitHub Release |
+
+The target platform is read from `.cascadeguard.yaml` (`ci.platform: github`).
+The pre-generated files in this repo were produced by running this command
+against the hello-world entry in `images.yaml`.
