@@ -7,16 +7,14 @@ name: CI
   push:
     branches: [main]
     paths:
-      - "images/**"
+      - "local/**"
       - "images.yaml"
-      - "shared/**"
       - ".github/workflows/**"
   pull_request:
     branches: [main]
     paths:
-      - "images/**"
+      - "local/**"
       - "images.yaml"
-      - "shared/**"
       - ".github/workflows/**"
 
 permissions:
@@ -32,7 +30,7 @@ jobs:
       matrix:
         include:
             - name: hello-world
-              dockerfile: Dockerfile
+              dockerfile: local/hello-world/Dockerfile
               registry: ghcr.io
               image: cascadeguard/hello-world
               tag: "latest"
