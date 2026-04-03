@@ -4,7 +4,7 @@
   source:
     provider: github
     repo: cascadeguard/cascadeguard-exemplar
-    dockerfile: Dockerfile
+    dockerfile: local/hello-world/Dockerfile
     branch: main
   rebuildDelay: 7d
   autoRebuild: true

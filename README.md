@@ -7,11 +7,13 @@ every task-mode CLI command against a real directory layout.
 
 ```
 .
-├── Dockerfile                       # hello-world nginx image
-├── index.html                       # static page served by nginx
+├── local/
+│   └── hello-world/
+│       ├── Dockerfile               # hello-world nginx image
+│       └── index.html               # static page served by nginx
 ├── images.yaml                      # enrollment configuration
 ├── .cascadeguard.yaml               # CascadeGuard config (ci.platform, etc.)
-├── .github/workflows/               # auto-generated CI pipelines (task generate-ci)
+├── .github/workflows/               # auto-generated CI pipelines (generate-ci)
 │   ├── ci.yaml
 │   ├── build-image.yaml
 │   ├── scheduled-scan.yaml
@@ -54,7 +56,7 @@ cascadeguard --images-yaml images.yaml enrol \
   --repository cascadeguard/my-app \
   --provider github \
   --repo cascadeguard/my-app \
-  --dockerfile Dockerfile \
+  --dockerfile local/my-app/Dockerfile \
   --branch main \
   --rebuild-delay 7d
 ```
@@ -81,20 +83,8 @@ cascadeguard build \
   --repo cascadeguard/cascadeguard-exemplar
 ```
 
-Dispatches the `build-hello-world.yml` workflow in the target repository.
+Dispatches the build workflow in the target repository.
 Requires a GitHub token with `actions:write` scope.
-
-### deploy — sync via ArgoCD
-
-```bash
-export ARGOCD_TOKEN="..."
-cascadeguard deploy \
-  --image hello-world \
-  --app hello-world-prod \
-  --argocd-server https://argocd.example.com
-```
-
-Posts a sync request to the ArgoCD application.
 
 ### test — check build results
 
@@ -105,8 +95,8 @@ cascadeguard test \
   --repo cascadeguard/cascadeguard-exemplar
 ```
 
-Fetches the latest workflow run for `build-hello-world.yml` and prints
-status/conclusion. Exits non-zero when the conclusion is `failure`.
+Fetches the latest workflow run and prints status/conclusion.
+Exits non-zero when the conclusion is `failure`.
 
 ### pipeline — run the full lifecycle
 
@@ -121,9 +111,8 @@ cascadeguard \
   --repo cascadeguard/cascadeguard-exemplar
 ```
 
-Runs **validate → check → build → deploy → test** in sequence. Deploy is
-skipped when no ArgoCD server is configured. Build and test are skipped when
-no `--image` is supplied.
+Runs **validate → check → build → test** in sequence. Build and test are
+skipped when no `--image` is supplied.
 
 ### status — show all image states
 
@@ -135,7 +124,7 @@ Prints a summary table of every application image and base image tracked
 under the state directory, including version, digest, build time, and
 dependency information.
 
-### generate-ci — emit GitHub Actions workflow files
+### generate-ci — emit CI workflow files
 
 ```bash
 cascadeguard generate-ci \
@@ -143,14 +132,10 @@ cascadeguard generate-ci \
   --output-dir .
 ```
 
-Or via the Taskfile wrapper (recommended):
-
-```bash
-task generate-ci
-```
-
-Reads `images.yaml` and emits four GitHub Actions workflow files under
-`.github/workflows/`. Re-run whenever you add or remove an image.
+Reads `images.yaml` and emits workflow files for the configured CI platform.
+Works with any supported tool — the target platform is read from
+`.cascadeguard.yaml` (`ci.platform: github`). Re-run whenever you add or
+remove an image.
 
 | File | Purpose |
 |---|---|
@@ -159,6 +144,5 @@ Reads `images.yaml` and emits four GitHub Actions workflow files under
 | `scheduled-scan.yaml` | Nightly CVE re-scan of published images |
 | `release.yaml` | Tag-triggered sign, push, and GitHub Release |
 
-The target platform is read from `.cascadeguard.yaml` (`ci.platform: github`).
 The pre-generated files in this repo were produced by running this command
 against the hello-world entry in `images.yaml`.
