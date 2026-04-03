@@ -68,6 +68,7 @@ jobs:
           context: .
           file: ${{ inputs.dockerfile }}
           push: ${{ inputs.push }}
+          load: ${{ !inputs.push }}  # load into local daemon on PRs so scanners can find the image
           tags: ${{ inputs.registry }}/${{ inputs.image }}:${{ inputs.tag }}
           cache-from: type=gha,scope=${{ inputs.name }}
           cache-to: type=gha,scope=${{ inputs.name }},mode=max
