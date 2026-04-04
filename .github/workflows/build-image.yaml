@@ -10,6 +10,11 @@ name: build-image
         description: "Image name (from images.yaml)"
         required: true
         type: string
+      context:
+        description: "Docker build context path relative to repo root"
+        required: false
+        type: string
+        default: "."
       dockerfile:
         description: "Path to Dockerfile relative to repo root"
         required: true
@@ -65,7 +70,7 @@ jobs:
         id: build
         uses: docker/build-push-action@v6
         with:
-          context: .
+          context: ${{ inputs.context }}
           file: ${{ inputs.dockerfile }}
           push: ${{ inputs.push }}
           load: ${{ !inputs.push }}  # load into local daemon on PRs so scanners can find the image

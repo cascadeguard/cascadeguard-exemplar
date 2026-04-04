@@ -30,6 +30,7 @@ jobs:
       matrix:
         include:
             - name: hello-world
+              context: local/hello-world
               dockerfile: local/hello-world/Dockerfile
               registry: ghcr.io
               image: cascadeguard/hello-world
@@ -37,6 +38,7 @@ jobs:
     uses: ./.github/workflows/build-image.yaml
     with:
       name: ${{ matrix.name }}
+      context: ${{ matrix.context }}
       dockerfile: ${{ matrix.dockerfile }}
       registry: ${{ matrix.registry }}
       image: ${{ matrix.image }}
