@@ -71,7 +71,8 @@ jobs:
           load: ${{ !inputs.push }}  # load into local daemon on PRs so scanners can find the image
           tags: ${{ inputs.registry }}/${{ inputs.image }}:${{ inputs.tag }}
           cache-from: type=gha,scope=${{ inputs.name }}
-          cache-to: type=gha,scope=${{ inputs.name }},mode=max
+          # cache-to requires push=true; load=true is incompatible with GHA cache export
+          cache-to: ${{ inputs.push && format('type=gha,scope={0},mode=max', inputs.name) || '' }}
 
       - name: Scan with Grype
         uses: anchore/scan-action@v6
