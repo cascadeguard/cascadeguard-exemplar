@@ -1,0 +1,10 @@
+- name: hello-world
+  registry: ghcr.io
+  repository: cascadeguard/hello-world
+  source:
+    provider: github
+    repo: cascadeguard/cascadeguard-exemplar
+    dockerfile: local/hello-world/Dockerfile
+    branch: main
+  rebuildDelay: 7d
+  autoRebuild: true
