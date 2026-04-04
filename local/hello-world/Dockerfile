@@ -1,4 +1,4 @@
-FROM nginx:1.28.3-alpine3.23
+FROM nginx:latest
 
 COPY index.html /usr/share/nginx/html/index.html
 

@@ -23,7 +23,7 @@ every task-mode CLI command against a real directory layout.
         ├── images/
         │   └── hello-world.yaml     # application image state
         └── base-images/
-            └── nginx-1.27-alpine.yaml  # tracked upstream base image
+            └── nginx-latest.yaml        # tracked upstream base image
 ```
 
 ## Prerequisites
