@@ -84,7 +84,7 @@ jobs:
           output-format: table
 
       - name: Scan with Trivy
-        uses: aquasecurity/trivy-action@0.30.0
+        uses: aquasecurity/trivy-action@v0.35.0
         with:
           # On PRs (load=true), use the local image ID to avoid registry pull attempts
           image-ref: ${{ inputs.push && format('{0}/{1}:{2}', inputs.registry, inputs.image, inputs.tag) || steps.build.outputs.imageid }}
