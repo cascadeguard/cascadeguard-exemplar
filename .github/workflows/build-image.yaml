@@ -53,14 +53,14 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
-        uses: actions/checkout@v4
+        uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4
 
       - name: Set up Docker Buildx
-        uses: docker/setup-buildx-action@v3
+        uses: docker/setup-buildx-action@8d2750c68a42422c14e847fe6c8ac0403b4cbd6f # v3
 
       - name: Log in to GHCR
         if: inputs.push
-        uses: docker/login-action@v3
+        uses: docker/login-action@c94ce9fb468520275223c153574b00df6fe4bcc9 # v3
         with:
           registry: ghcr.io
           username: ${{ github.actor }}
@@ -68,7 +68,7 @@ jobs:
 
       - name: Build${{ inputs.push && ' and push' || '' }} image
         id: build
-        uses: docker/build-push-action@v6
+        uses: docker/build-push-action@10e90e3645eae34f1e60eeb005ba3a3d33f178e8 # v6
         with:
           context: ${{ inputs.context }}
           file: ${{ inputs.dockerfile }}
@@ -80,7 +80,7 @@ jobs:
           cache-to: ${{ inputs.push && format('type=gha,scope={0},mode=max', inputs.name) || '' }}
 
       - name: Scan with Grype
-        uses: anchore/scan-action@v6
+        uses: anchore/scan-action@1638637db639e0ade3258b51db49a9a137574c3e # v6
         with:
           # On PRs (load=true), use the local image ID to avoid registry pull attempts
           image: ${{ inputs.push && format('{0}/{1}:{2}', inputs.registry, inputs.image, inputs.tag) || steps.build.outputs.imageid }}
@@ -89,7 +89,7 @@ jobs:
           output-format: table
 
       - name: Scan with Trivy
-        uses: aquasecurity/trivy-action@v0.35.0
+        uses: aquasecurity/trivy-action@57a97c7e7821a5776cebc9bb87c984fa69cba8f1 # v0.35.0
         with:
           # On PRs (load=true), use the local image ID to avoid registry pull attempts
           image-ref: ${{ inputs.push && format('{0}/{1}:{2}', inputs.registry, inputs.image, inputs.tag) || steps.build.outputs.imageid }}
@@ -100,7 +100,7 @@ jobs:
 
       - name: Generate SBOM (Syft)
         if: inputs.push
-        uses: anchore/sbom-action@v0
+        uses: anchore/sbom-action@e22c389904149dbc22b58101806040fa8d37a610 # v0
         with:
           image: ${{ inputs.registry }}/${{ inputs.image }}:${{ inputs.tag }}
           format: spdx-json
@@ -108,7 +108,7 @@ jobs:
 
       - name: Sign image with Cosign
         if: inputs.push && inputs.sign
-        uses: sigstore/cosign-installer@v3
+        uses: sigstore/cosign-installer@398d4b0eeef1380460a10c8013a76f728fb906ac # v3
       - name: Run Cosign keyless sign
         if: inputs.push && inputs.sign
         env:
