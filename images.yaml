@@ -8,3 +8,14 @@
     branch: main
   rebuildDelay: 7d
   autoRebuild: true
+
+- name: exemplar-web-cloudflare
+  registry: ghcr.io
+  repository: cascadeguard/exemplar-web-cloudflare
+  source:
+    provider: github
+    repo: cascadeguard/cascadeguard-exemplar-web-cloudflare
+    dockerfile: Dockerfile
+    branch: main
+  rebuildDelay: 7d
+  autoRebuild: true
