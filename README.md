@@ -47,10 +47,10 @@ cascadeguard --images-yaml images.yaml validate
 Validates that every entry in `images.yaml` has the required fields (`name`,
 `registry`, `repository`) and that source blocks include `repo` and `provider`.
 
-### enrol — add a new image
+### images enrol — add a new image
 
 ```bash
-cascadeguard --images-yaml images.yaml enrol \
+cascadeguard images --images-yaml images.yaml enrol \
   --name my-app \
   --registry ghcr.io \
   --repository cascadeguard/my-app \
@@ -61,23 +61,23 @@ cascadeguard --images-yaml images.yaml enrol \
   --rebuild-delay 7d
 ```
 
-Appends a new entry to `images.yaml`. Use `validate` afterwards to confirm
+Appends a new entry to `images.yaml`. Use `images validate` afterwards to confirm
 the file is still well-formed.
 
-### check — inspect state files
+### images check — inspect state files
 
 ```bash
-cascadeguard --state-dir cascadeguard/state check
+cascadeguard images --state-dir cascadeguard/state check
 ```
 
 Reads every `*.yaml` file under `cascadeguard/state/images/` and
 `cascadeguard/state/base-images/`, printing digest, build, and status info.
 
-### build — trigger a GitHub Actions build
+### pipeline build — trigger a GitHub Actions build
 
 ```bash
 export GITHUB_TOKEN="ghp_..."
-cascadeguard build \
+cascadeguard pipeline build \
   --image hello-world \
   --tag latest \
   --repo cascadeguard/cascadeguard-exemplar
@@ -86,11 +86,11 @@ cascadeguard build \
 Dispatches the build workflow in the target repository.
 Requires a GitHub token with `actions:write` scope.
 
-### test — check build results
+### pipeline test — check build results
 
 ```bash
 export GITHUB_TOKEN="ghp_..."
-cascadeguard test \
+cascadeguard pipeline test \
   --image hello-world \
   --repo cascadeguard/cascadeguard-exemplar
 ```
@@ -98,14 +98,13 @@ cascadeguard test \
 Fetches the latest workflow run and prints status/conclusion.
 Exits non-zero when the conclusion is `failure`.
 
-### pipeline — run the full lifecycle
+### pipeline run — run the full lifecycle
 
 ```bash
 export GITHUB_TOKEN="ghp_..."
-cascadeguard \
+cascadeguard pipeline run \
   --images-yaml images.yaml \
   --state-dir cascadeguard/state \
-  pipeline \
   --image hello-world \
   --tag latest \
   --repo cascadeguard/cascadeguard-exemplar
@@ -114,10 +113,10 @@ cascadeguard \
 Runs **validate → check → build → test** in sequence. Build and test are
 skipped when no `--image` is supplied.
 
-### status — show all image states
+### images status — show all image states
 
 ```bash
-cascadeguard --state-dir cascadeguard/state status
+cascadeguard images --state-dir cascadeguard/state status
 ```
 
 Prints a summary table of every application image and base image tracked
