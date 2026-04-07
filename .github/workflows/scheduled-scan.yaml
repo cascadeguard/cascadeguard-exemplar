@@ -30,11 +30,24 @@ jobs:
       - name: Checkout
         uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4
 
+      - name: Check image existence
+        id: check-image
+        run: |
+          IMAGE="${{ matrix.registry }}/${{ matrix.image }}:${{ matrix.tag }}"
+          if docker manifest inspect "$IMAGE" > /dev/null 2>&1; then
+            echo "exists=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "exists=false" >> "$GITHUB_OUTPUT"
+            echo "::warning::Image $IMAGE not found — skipping scan"
+          fi
+
       - name: Pull published image
+        if: steps.check-image.outputs.exists == 'true'
         run: docker pull ${{ matrix.registry }}/${{ matrix.image }}:${{ matrix.tag }}
 
       - name: Scan with Grype
         id: grype
+        if: steps.check-image.outputs.exists == 'true'
         uses: anchore/scan-action@1638637db639e0ade3258b51db49a9a137574c3e # v6
         with:
           image: ${{ matrix.registry }}/${{ matrix.image }}:${{ matrix.tag }}
@@ -44,6 +57,7 @@ jobs:
           output-file: grype-${{ matrix.name }}.json
 
       - name: Scan with Trivy (SARIF)
+        if: steps.check-image.outputs.exists == 'true'
         uses: aquasecurity/trivy-action@57a97c7e7821a5776cebc9bb87c984fa69cba8f1 # v0.35.0
         with:
           image-ref: ${{ matrix.registry }}/${{ matrix.image }}:${{ matrix.tag }}
@@ -54,13 +68,13 @@ jobs:
 
       - name: Upload Trivy SARIF
         uses: github/codeql-action/upload-sarif@5c8a8a642e79153f5d047b10ec1cba1d1cc65699 # v3
-        if: always()
+        if: always() && steps.check-image.outputs.exists == 'true'
         with:
           sarif_file: trivy-${{ matrix.name }}.sarif
           category: trivy-${{ matrix.name }}
 
       - name: Open CVE issue on failure
-        if: failure()
+        if: failure() && steps.check-image.outputs.exists == 'true'
         uses: actions/github-script@f28e40c7f34bde8b3046d885e986cb6290c5673b # v7
         with:
           script: |
