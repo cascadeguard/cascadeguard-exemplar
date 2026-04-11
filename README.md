@@ -1,16 +1,26 @@
 # cascadeguard-exemplar
 
-Example CascadeGuard state repo with a hello-world nginx image. Demonstrates
-every task-mode CLI command against a real directory layout.
+Example CascadeGuard state repo. Demonstrates task-mode CLI commands and
+deprecation detection against real directory layouts.
+
+## Examples
+
+| Example | Base image | Purpose |
+|---|---|---|
+| [`local/hello-world`](local/hello-world/) | `nginx` | Basic enrolled image — full task-mode CLI walkthrough |
+| [`local/deprecated-openjdk`](local/deprecated-openjdk/) | `openjdk:17-alpine` | Deprecated base image — shows `DEPRECATED` finding + `eclipse-temurin` recommendation |
 
 ## Repository layout
 
 ```
 .
 ├── local/
-│   └── hello-world/
-│       ├── Dockerfile               # hello-world nginx image
-│       └── index.html               # static page served by nginx
+│   ├── hello-world/
+│   │   ├── Dockerfile               # hello-world nginx image
+│   │   └── index.html               # static page served by nginx
+│   └── deprecated-openjdk/
+│       ├── Dockerfile               # openjdk:17-alpine (deprecated — exemplar only)
+│       └── README.md                # deprecation detection walkthrough
 ├── images.yaml                      # enrollment configuration
 ├── .cascadeguard.yaml               # CascadeGuard config (ci.platform, etc.)
 ├── .github/workflows/               # auto-generated CI pipelines (generate-ci)
@@ -145,3 +155,37 @@ remove an image.
 
 The pre-generated files in this repo were produced by running this command
 against the hello-world entry in `images.yaml`.
+
+## Deprecated image detection
+
+CascadeGuard detects base images that have been officially deprecated on
+Docker Hub and recommends actively maintained replacements.
+
+### Example: openjdk → eclipse-temurin
+
+`openjdk` was deprecated in November 2022 and no longer receives security
+patches. The `local/deprecated-openjdk/Dockerfile` uses `openjdk:17-alpine`
+to demonstrate the detection flow:
+
+```bash
+cascadeguard scan local/deprecated-openjdk/Dockerfile
+```
+
+Expected output:
+
+```
+DEPRECATED  openjdk:17-alpine
+  The 'openjdk' image is deprecated and no longer receives security updates.
+  Recommended replacement: eclipse-temurin:17-alpine
+  See: https://hub.docker.com/_/openjdk
+```
+
+Fix the Dockerfile by replacing the deprecated base image:
+
+```diff
+-FROM openjdk:17-alpine
++FROM eclipse-temurin:17-alpine
+```
+
+See [`local/deprecated-openjdk/README.md`](local/deprecated-openjdk/README.md)
+for the full walkthrough.
