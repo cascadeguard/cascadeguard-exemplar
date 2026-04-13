@@ -1,13 +1,9 @@
 - name: hello-world
-  registry: ghcr.io
-  repository: cascadeguard/hello-world
+  image: hello-world
+  tag: latest
+  registry: ghcr.io/cascadeguard
   source:
-    provider: github
-    repo: cascadeguard/cascadeguard-exemplar
     dockerfile: local/hello-world/Dockerfile
-    branch: main
-  rebuildDelay: 7d
-  autoRebuild: true
 
 - name: exemplar-web-cloudflare
   registry: ghcr.io

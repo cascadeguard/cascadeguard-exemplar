@@ -1,0 +1,25 @@
+# CascadeGuard — Nightly Check (Thin Wrapper)
+#
+# Delegates to the reusable check workflow in cascadeguard-actions.
+# Runs cascadeguard images check to detect digest drift, new upstream
+# tags, and vulnerability changes. Replaces the separate scheduled-scan
+# and check-upstream-tags workflows.
+
+name: Check
+
+on:
+  schedule:
+    # Run every day at 06:00 UTC
+    - cron: "0 6 * * *"
+  workflow_dispatch:
+
+permissions:
+  contents: write
+  packages: read
+  issues: write
+  security-events: write
+
+jobs:
+  check:
+    uses: cascadeguard/cascadeguard-actions/.github/workflows/check.yaml@7bd7df2e249f145a3b6e91d0bea84c7a00add902 # main
+    secrets: inherit
