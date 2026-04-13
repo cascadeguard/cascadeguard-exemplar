@@ -20,7 +20,7 @@ enrollment:
 # Discovered from Dockerfile parsing
 # References to base image state files (not inline data)
 baseImages:
-  - nginx-1.27-alpine
+  - nginx-1.28-alpine3.23
 
 # Current published state (from registry/Kargo)
 currentVersion: null
