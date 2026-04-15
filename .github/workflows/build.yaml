@@ -1,0 +1,90 @@
+# CascadeGuard — Build Workflow
+#
+# Builds only the images whose files changed in the push. Changes to
+# shared/, images.yaml, or workflows trigger a full rebuild.
+# PR validation is handled separately by pr-check.yaml.
+
+name: Build
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - "images/**"
+      - "shared/**"
+      - "images.yaml"
+      - ".github/workflows/**"
+  workflow_dispatch:
+    inputs:
+      image_filter:
+        description: "Limit to a specific image name. Leave empty for all."
+        required: false
+        default: ""
+
+permissions:
+  contents: read
+  packages: write
+  id-token: write
+  security-events: write
+  attestations: write
+
+jobs:
+  # ── Determine which images to build ──────────────────────────────
+  matrix:
+    runs-on: ubuntu-latest
+    outputs:
+      matrix: ${{ steps.gen.outputs.matrix }}
+      has_images: ${{ steps.gen.outputs.has_images }}
+    steps:
+      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6
+        with:
+          fetch-depth: 2
+
+      - name: Generate build matrix
+        id: gen
+        uses: cascadeguard/cascadeguard-actions/generate-build-matrix@1c3e7fdffa70db9a3d0f6af78545b137d7a0f8b4 # main
+        with:
+          image-filter: ${{ github.event.inputs.image_filter || '' }}
+
+  # ── Validate ─────────────────────────────────────────────────────
+  validate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6
+      - uses: cascadeguard/cascadeguard-actions/setup-cascadeguard@1c3e7fdffa70db9a3d0f6af78545b137d7a0f8b4 # main
+      - run: cascadeguard images validate
+
+  # ── Per-Image Build ──────────────────────────────────────────────
+  build:
+    needs: [matrix, validate]
+    if: needs.matrix.outputs.has_images == 'true'
+    strategy:
+      fail-fast: false
+      matrix: ${{ fromJson(needs.matrix.outputs.matrix) }}
+    uses: cascadeguard/cascadeguard-actions/.github/workflows/build-image.yaml@1c3e7fdffa70db9a3d0f6af78545b137d7a0f8b4 # main
+    with:
+      image_path: ${{ matrix.image_path }}
+      image_name: ${{ matrix.image_name }}
+      image_tag: ${{ matrix.image_tag }}
+      push_and_sign: true
+    secrets: inherit
+
+  # ── Actions Policy ───────────────────────────────────────────────
+  policy:
+    uses: cascadeguard/cascadeguard-actions/.github/workflows/enforce-actions-policy.yaml@1c3e7fdffa70db9a3d0f6af78545b137d7a0f8b4 # main
+
+  # ── Build Gate ───────────────────────────────────────────────────
+  build-gate:
+    runs-on: ubuntu-latest
+    needs: [build]
+    if: always()
+    steps:
+      - name: Check all builds passed
+        run: |
+          RESULT="${{ needs.build.result }}"
+          if [[ "$RESULT" == "success" || "$RESULT" == "skipped" ]]; then
+            echo "All image builds passed (result: $RESULT)."
+          else
+            echo "::error::One or more image builds failed."
+            exit 1
+          fi
