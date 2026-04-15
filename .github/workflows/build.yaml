@@ -42,7 +42,7 @@ jobs:
 
       - name: Generate build matrix
         id: gen
-        uses: cascadeguard/cascadeguard-actions/generate-build-matrix@a2c4597db798af7e37b9cf01d14e786860f55b85 # main
+        uses: cascadeguard/cascadeguard-actions/generate-build-matrix@1c3e7fdffa70db9a3d0f6af78545b137d7a0f8b4 # main
         with:
           image-filter: ${{ github.event.inputs.image_filter || '' }}
 
@@ -51,7 +51,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6
-      - uses: cascadeguard/cascadeguard-actions/setup-cascadeguard@a2c4597db798af7e37b9cf01d14e786860f55b85 # main
+      - uses: cascadeguard/cascadeguard-actions/setup-cascadeguard@1c3e7fdffa70db9a3d0f6af78545b137d7a0f8b4 # main
       - run: cascadeguard images validate
 
   # ── Per-Image Build ──────────────────────────────────────────────
@@ -61,7 +61,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix: ${{ fromJson(needs.matrix.outputs.matrix) }}
-    uses: cascadeguard/cascadeguard-actions/.github/workflows/build-image.yaml@a2c4597db798af7e37b9cf01d14e786860f55b85 # main
+    uses: cascadeguard/cascadeguard-actions/.github/workflows/build-image.yaml@1c3e7fdffa70db9a3d0f6af78545b137d7a0f8b4 # main
     with:
       image_path: ${{ matrix.image_path }}
       image_name: ${{ matrix.image_name }}
@@ -71,7 +71,7 @@ jobs:
 
   # ── Actions Policy ───────────────────────────────────────────────
   policy:
-    uses: cascadeguard/cascadeguard-actions/.github/workflows/enforce-actions-policy.yaml@a2c4597db798af7e37b9cf01d14e786860f55b85 # main
+    uses: cascadeguard/cascadeguard-actions/.github/workflows/enforce-actions-policy.yaml@1c3e7fdffa70db9a3d0f6af78545b137d7a0f8b4 # main
 
   # ── Build Gate ───────────────────────────────────────────────────
   build-gate:
