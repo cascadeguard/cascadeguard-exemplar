@@ -11,8 +11,9 @@ default: deny
 
 # GitHub organisations whose actions are trusted by default.
 allowed_owners:
-  - actions       # github.com/actions/*
-  - docker        # github.com/docker/*
+  - actions        # github.com/actions/*
+  - cascadeguard   # github.com/cascadeguard/*
+  - docker         # github.com/docker/*
 
 # Specific actions permitted by name (owner/repo).
 allowed_actions:
