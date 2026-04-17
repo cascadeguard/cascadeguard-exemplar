@@ -42,7 +42,7 @@ jobs:
 
       - name: Generate build matrix
         id: gen
-        uses: cascadeguard/cascadeguard-actions/generate-build-matrix@1c3e7fdffa70db9a3d0f6af78545b137d7a0f8b4 # main
+        uses: cascadeguard/cascadeguard-actions/generate-build-matrix@073fc982dea7fb6c06116b658cd21589e9bc8450 # main
         with:
           image-filter: ${{ github.event.inputs.image_filter || '' }}
 
@@ -51,7 +51,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6
-      - uses: cascadeguard/cascadeguard-actions/setup-cascadeguard@1c3e7fdffa70db9a3d0f6af78545b137d7a0f8b4 # main
+      - uses: cascadeguard/cascadeguard-actions/setup-cascadeguard@073fc982dea7fb6c06116b658cd21589e9bc8450 # main
       - run: cascadeguard images validate
 
   # ── Per-Image Build ──────────────────────────────────────────────
