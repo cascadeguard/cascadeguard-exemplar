@@ -1,0 +1,9 @@
+# Trivy vulnerability suppressions for cascadeguard-exemplar
+# Each entry must reference a tracking issue for audit trail.
+# Remove an entry only after the underlying CVE is patched in the base image.
+
+# GHSA-gh3v-cj5j-vprh — HIGH severity advisory affecting nginx:1.28.3-alpine3.23
+# Suppressed pending upstream patch availability in a stable nginx:*-alpine3.23 tag.
+# Re-evaluate when nginx releases a patched 1.28.x-alpine3.23 image.
+# Tracking: CAS-525 — https://paperclip.lab.ctoaas.co/CAS/issues/CAS-525
+GHSA-gh3v-cj5j-vprh
