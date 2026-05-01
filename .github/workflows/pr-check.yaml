@@ -21,7 +21,7 @@ jobs:
     steps:
       - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6
       - name: Set up CascadeGuard CLI
-        uses: cascadeguard/cascadeguard-actions/setup-cascadeguard@510b0009b78df3114345cb907db6b026da79d7ab # main
+        uses: cascadeguard/cascadeguard-actions/setup-cascadeguard@23b32fea1e1f1992faea9e978e9741810bf3ebac # main
       - name: CascadeGuard validate
         run: cascadeguard images validate
 
