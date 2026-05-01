@@ -31,5 +31,5 @@ jobs:
 
   # ── Dry-Run Check ────────────────────────────────────────────────
   dry-run:
-    uses: cascadeguard/cascadeguard-actions/.github/workflows/check-dry-run.yaml@eec3d4c801942e68667e9f84cecd7b0a195f8cee # main
+    uses: cascadeguard/cascadeguard-actions/.github/workflows/check-dry-run.yaml@23b32fea1e1f1992faea9e978e9741810bf3ebac # main
     secrets: inherit
