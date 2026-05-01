@@ -27,7 +27,7 @@ jobs:
 
   # ── Actions Policy Enforcement ───────────────────────────────────
   policy:
-    uses: cascadeguard/cascadeguard-actions/.github/workflows/enforce-actions-policy.yaml@510b0009b78df3114345cb907db6b026da79d7ab # main
+    uses: cascadeguard/cascadeguard-actions/.github/workflows/enforce-actions-policy.yaml@23b32fea1e1f1992faea9e978e9741810bf3ebac # main
 
   # ── Dry-Run Check ────────────────────────────────────────────────
   dry-run:
